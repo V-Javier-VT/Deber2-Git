@@ -21,7 +21,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_PRIVATE_KEY }}
-        source: "./index.html" # Envía todos los archivos de la raíz del repositorio
+        source: "./" # Envía todos los archivos de la raíz del repositorio
         target: "/var/www/html" # Directorio objetivo en el servidor
         command: "sudo mv index.html /var/www/html/"
 
