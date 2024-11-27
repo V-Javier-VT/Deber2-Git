@@ -1,0 +1,37 @@
+name: Deploy HTML to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Chequeo del repositorio
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Conectar a la instancia EC2 y desplegar
+    - name: Deploy HTML to EC2
+      uses: appleboy/ssh-action@v0.1.14
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        source: "./main.html"
+        script: |
+          # Cambiar al directorio del servidor web (por ejemplo, Nginx o Apache)
+          cd /var/www/html
+          
+          # Limpiar el directorio actual
+          rm -rf *
+          
+          # Copiar los archivos HTML desde el repositorio
+          mkdir -p /var/www/html
+          cp -r * /var/www/html/
+          
+          # Reiniciar el servidor web
+          sudo systemctl restart nginx || sudo systemctl restart apache2
