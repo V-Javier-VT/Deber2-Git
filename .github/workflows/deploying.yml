@@ -16,7 +16,7 @@ jobs:
 
     # 2. Conectar a la instancia EC2 y desplegar
     - name: Deploy HTML to EC2
-      uses: appleboy/ssh-action@v0.1.14
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
