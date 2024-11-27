@@ -10,18 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Chequeo del repositorio
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # 2. Conectar a la instancia EC2 y desplegar archivos
-    - name: Deploy HTML to EC2
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
-        source: "./" # Envía todos los archivos de la raíz del repositorio
-        target: "/var/www/html" # Directorio objetivo en el servidor
-        command: "sudo mv index.html /var/www/html/"
-
+      - name: Copy HTML to EC2
+        uses: appleboy/scp-action@v0.1.3
+        with:
+            host: ${{ secrets.EC2_HOST }}
+            username: ${{ secrets.EC2_USER }}
+            key: ${{ secrets.EC2_KEY }}
+            source: "./index.html"
+            target: "/var/www/html/"
+            command: "sudo mv index.html /var/www/html/"
