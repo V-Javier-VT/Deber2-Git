@@ -10,20 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    # 1. Chequeo del repositorio
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Copy HTML to EC2
-        uses: appleboy/scp-action@v0.1.3
-        with:
-            host: ${{ secrets.EC2_HOST }}
-            username: ${{ secrets.EC2_USER }}
-            key: ${{ secrets.EC2_KEY }}
-            source: "./index.html"
-            target: "/var/www/html/"
-            command: |
-                  sudo mkdir -p /var/www/html/
-                  sudo mv /var/www/html/index.html /var/www/html/index.html
-                  sudo chown -R www-data:www-data /var/www/html/
-                  sudo chmod -R 755 /var/www/html/
-    
+    # 2. Conectar a la instancia EC2 y desplegar
+    - name: Deploy HTML to EC2
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        port: 22
+        script: |
+          # Cambiar al directorio del servidor web (por ejemplo, Nginx o Apache)
+          cd /var/www/html
+          
+          # Limpiar el directorio actual
+          rm -rf *
+          
+          # Copiar los archivos HTML desde el repositorio
+          mkdir -p /var/www/html
+          cp -r * /var/www/html/
+          
+          # Configurar permisos adecuados
+          chmod -R 755 /var/www/html
+          
+          # Reiniciar el servidor web
+          sudo systemctl restart nginx || sudo systemctl restart apache2
